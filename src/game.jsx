@@ -3,7 +3,8 @@ import { useState,useEffect, useRef } from "react"
 export function Game(){
     const [position, setposition] = useState({x: 0, y: 0});
     const [score, setScore] = useState(0)
-    const intervalik = useRef(null);
+    const [isRunning, setIsRunning] = useState(false)
+    const intervalRef = useRef(null)
 
     const addscore = () =>{
         setScore(s => s + 1)
@@ -22,22 +23,23 @@ export function Game(){
                     y: Math.floor(Math.random() * 450) + 100})
 
     }
-    const stopBall = () =>{
-        if (intervalik.current){
-            clearInterval(intervalik.current);
-            intervalik.current = null;
+
+    const gameRun = () =>{
+        if (isRunning){
+            clearInterval(intervalRef.current);
+            intervalRef.current = null
+            setIsRunning(false)
+        }else{
+            intervalRef.current = setInterval(() =>{
+                randomcisla();
+            }, 1000);
+            setIsRunning(true)
         }
-    };
+    }
 
     //nacitani koule
     useEffect(() =>{
-        const interval = setInterval(() =>{
-        randomcisla()
-        console.log("tf")
-        },1000);
-
-        intervalik.current = interval
-        return () => clearInterval(interval)
+        return () => clearInterval(intervalRef.current);
     }, [])
     
 
@@ -52,6 +54,6 @@ export function Game(){
     <p>Pozice x: {position.x} pozice y: {position.y}</p>
     <p>score: {score}</p>
     <button onClick={randomcisla}>change position</button>
-    <button onClick={stopBall}>Stop ball</button>
+    <button onClick={gameRun}>{isRunning ? "Stop Game" : "Run Game"}</button>
     </>)
 }
